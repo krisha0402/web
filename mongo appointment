@@ -1,0 +1,94 @@
+ Folder Structure:
+appointment-system/
+├── app.js
+├── models/
+│   ├── Doctor.js
+│   └── Appointment.js
+├── routes/
+│   └── api.js
+├── .env
+├── package.json
+✅ 1. Setup
+npm init -y
+npm install express mongoose dotenv body-parser
+Create .env file:
+MONGO_URI=mongodb://localhost:27017/appointmentDB
+PORT=5000
+✅ 2. models/Doctor.js
+const mongoose = require('mongoose');
+
+const doctorSchema = new mongoose.Schema({
+  name: String,
+  specialization: String
+});
+
+module.exports = mongoose.model('Doctor', doctorSchema);
+✅ 3. models/Appointment.js
+const mongoose = require('mongoose');
+
+const appointmentSchema = new mongoose.Schema({
+  doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor' },
+  patientName: String,
+  time: String
+});
+
+module.exports = mongoose.model('Appointment', appointmentSchema);
+✅ 4. routes/api.js
+const express = require('express');
+const router = express.Router();
+const Doctor = require('../models/Doctor');
+const Appointment = require('../models/Appointment');
+
+// View list of doctors
+router.get('/doctors', async (req, res) => {
+  const doctors = await Doctor.find();
+  res.json(doctors);
+});
+
+// Book appointment
+router.post('/appointments', async (req, res) => {
+  const { doctorId, patientName, time } = req.body;
+  try {
+    const appointment = new Appointment({ doctorId, patientName, time });
+    await appointment.save();
+    res.status(201).json({ message: 'Appointment booked', appointment });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Cancel appointment
+router.delete('/appointments/:id', async (req, res) => {
+  try {
+    await Appointment.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Appointment canceled' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
+✅ 5. app.js
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const apiRoutes = require('./routes/api');
+
+const app = express();
+app.use(bodyParser.json());
+app.use('/api', apiRoutes);
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('MongoDB Connected');
+    app.listen(process.env.PORT, () => {
+      console.log(`Server running on port ${process.env.PORT}`);
+    });
+  })
+  .catch(err => console.log(err));
+✅ Sample Doctors (Insert via MongoDB Compass)
+{
+  "name": "Dr. Smith",
+  "specialization": "Cardiologist"
+}
