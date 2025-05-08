@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    label, input {
+      display: block;
+      margin: 10px 0;
+    }
+    input[type="submit"] {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Student Registration Form</h2>
+  <form id="studentForm">
+    <label>Name:</label>
+    <input type="text" id="name" required />
+
+    <label>Email:</label>
+    <input type="email" id="email" required />
+
+    <label>PRN Number:</label>
+    <input type="text" id="prn" required />
+
+    <label>Class:</label>
+    <input type="text" id="class" required />
+
+    <input type="submit" value="Register" />
+  </form>
+
+  <p id="output"></p>
+
+  <script src="main.js"></script>
+</body>
+</html>
+
+main.ts
+
+interface Student {
+  name: string;
+  email: string;
+  prn: string;
+  className: string;
+}
+
+const form = document.getElementById("studentForm") as HTMLFormElement;
+const output = document.getElementById("output") as HTMLParagraphElement;
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const student: Student = {
+    name: (document.getElementById("name") as HTMLInputElement).value,
+    email: (document.getElementById("email") as HTMLInputElement).value,
+    prn: (document.getElementById("prn") as HTMLInputElement).value,
+    className: (document.getElementById("class") as HTMLInputElement).value
+  };
+
+  output.textContent = `Registered: ${student.name} (${student.prn}), ${student.className}, ${student.email}`;
+});
