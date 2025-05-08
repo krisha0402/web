@@ -1,0 +1,155 @@
+SIMPLEEE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculator</title>
+</head>
+<body>
+  <div id="display">0</div>
+  <div id="calculator">
+    <button>7</button><button>8</button><button>9</button><button>/</button><br>
+    <button>4</button><button>5</button><button>6</button><button>*</button><br>
+    <button>1</button><button>2</button><button>3</button><button>-</button><br>
+    <button>0</button><button>C</button><button>=</button><button>+</button>
+  </div>
+
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+app.ts
+(() => {
+  const display = document.getElementById("display")!;
+  const buttons = document.querySelectorAll("button");
+
+
+  let a = "", b = "", op = "";
+
+
+  buttons.forEach(btn => {
+    btn.onclick = () => {
+      const val = btn.textContent!;
+      if ("0123456789".indexOf(val) !== -1) {
+        if (op) b += val;
+        else a += val;
+        update();
+      } else if ("+-*/".indexOf(val) !== -1) {
+        if (a) op = val;
+      } else if (val === "=") {
+        if (a && b && op) {
+          a = eval(`${a}${op}${b}`).toString();
+          b = "";
+          op = "";
+          update();
+        }
+      } else if (val === "C") {
+        a = b = op = "";
+        update();
+      }
+    };
+  });
+
+BMIIII
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BMI Calculator</title>
+</head>
+<body>
+  <h2>BMI Calculator</h2>
+  <input type="number" id="weight" placeholder="Weight (kg)" />
+  <input type="number" id="height" placeholder="Height (m)" />
+  <button onclick="calculateBMI()">Calculate BMI</button>
+  <p id="result"></p>
+
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
+app.ts
+function calculateBMI(): void {
+    const weightInput = document.getElementById("weight") as HTMLInputElement;
+    const heightInput = document.getElementById("height") as HTMLInputElement;
+    const result = document.getElementById("result") as HTMLParagraphElement;
+ 
+    const weight = parseFloat(weightInput.value);
+    const height = parseFloat(heightInput.value);
+ 
+    if (isNaN(weight) || isNaN(height) || height <= 0) {
+      result.textContent = "Please enter valid weight and height.";
+      return;
+    }
+ 
+    const bmi = weight / (height * height);
+    let category: string;
+ 
+    if (bmi < 18.5) category = "Underweight";
+    else if (bmi < 24.9) category = "Normal weight";
+    else if (bmi < 29.9) category = "Overweight";
+    else category = "Obese";
+ 
+    result.textContent = `Your BMI is ${bmi.toFixed(2)} (${category}).`;
+  }
+ 
+
+  function update() {
+    display.textContent = a + op + b || "0";
+  }
+})();
+
+TEMPPPP
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Temperature Converter</title>
+  <script src="app.js" defer></script>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, select, button { margin: 5px; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Temperature Converter</h2>
+  
+  <label>Enter Temperature:</label>
+  <input type="number" id="tempInput">
+  
+  <select id="unit">
+    <option value="CtoF">Celsius to Fahrenheit</option>
+    <option value="FtoC">Fahrenheit to Celsius</option>
+  </select>
+
+  <button onclick="convertTemp()">Convert</button>
+
+  <p id="result"></p>
+</body>
+</html>
+
+function convertTemp(): void {
+  const input = document.getElementById("tempInput") as HTMLInputElement;
+  const unit = (document.getElementById("unit") as HTMLSelectElement).value;
+  const result = document.getElementById("result") as HTMLParagraphElement;
+
+  const temp = parseFloat(input.value);
+
+  if (isNaN(temp)) {
+    result.innerText = "Please enter a valid number.";
+    return;
+  }
+
+  if (unit === "CtoF") {
+    const fahrenheit = (temp * 9/5) + 32;
+    result.innerText = `${temp}°C = ${fahrenheit.toFixed(2)}°F`;
+  } else {
+    const celsius = (temp - 32) * 5/9;
+    result.innerText = `${temp}°F = ${celsius.toFixed(2)}°C`;
+  }
+}
