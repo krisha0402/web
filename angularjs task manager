@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html ng-app="taskApp">
+<head>
+  <meta charset="UTF-8">
+  <title>AngularJS Task Manager</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 20px;
+    }
+    input {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li.completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+  </style>
+</head>
+<body ng-controller="TaskController">
+
+  <h2>Task Manager</h2>
+
+  <form ng-submit="addTask()">
+    <input type="text" ng-model="newTask" placeholder="Enter a new task" required />
+    <button type="submit">Add Task</button>
+  </form>
+
+  <ul>
+    <li ng-repeat="task in tasks" ng-class="{completed: task.completed}">
+      <input type="checkbox" ng-model="task.completed"> {{ task.name }}
+    </li>
+  </ul>
+
+  <p>Total Tasks: {{ tasks.length }}</p>
+  <p>Completed Tasks: {{ getCompletedCount() }}</p>
+
+  <script>
+    const app = angular.module("taskApp", []);
+
+    // Service to manage tasks
+    app.factory("TaskService", function () {
+      const tasks = [];
+
+      return {
+        getTasks: function () {
+          return tasks;
+        },
+        addTask: function (taskName) {
+          tasks.push({ name: taskName, completed: false });
+        },
+        countCompleted: function () {
+          return tasks.filter(task => task.completed).length;
+        }
+      };
+    });
+
+    // Controller
+    app.controller("TaskController", function ($scope, TaskService) {
+      $scope.tasks = TaskService.getTasks();
+      $scope.newTask = "";
+
+      $scope.addTask = function () {
+        if ($scope.newTask.trim() !== "") {
+          TaskService.addTask($scope.newTask);
+          $scope.newTask = "";
+        }
+      };
+
+      $scope.getCompletedCount = function () {
+        return TaskService.countCompleted();
+      };
+    });
+  </script>
+
+</body>
+</html>
