@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AJAX Product Search</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    input { padding: 8px; width: 300px; }
+    .product { padding: 10px; margin: 5px 0; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+
+  <h2>Search Products</h2>
+  <input type="text" id="searchBox" placeholder="Type to search...">
+
+  <div id="productList"></div>
+
+  <script>
+    document.getElementById('searchBox').addEventListener('input', function () {
+      const query = this.value.toLowerCase();
+
+      // AJAX request
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'products.json', true);
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          const products = JSON.parse(xhr.responseText);
+          const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+
+          const resultHTML = filtered.map(p => `
+            <div class="product">
+              <strong>${p.name}</strong><br>
+              Price: ₹${p.price}
+            </div>
+          `).join('');
+
+          document.getElementById('productList').innerHTML = resultHTML;
+        }
+      };
+      xhr.send();
+    });
+  </script>
+
+</body>
+</html>
+
+products.json (Mock Product Catalog)
+[
+  { "name": "Laptop", "price": 55000 },
+  { "name": "Smartphone", "price": 22000 },
+  { "name": "Wireless Mouse", "price": 800 },
+  { "name": "Bluetooth Speaker", "price": 1500 },
+  { "name": "Keyboard", "price": 1200 }
+]
