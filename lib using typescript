@@ -1,0 +1,78 @@
+📄 book.ts
+export class Book {
+  constructor(
+    public id: number,
+    public title: string,
+    public author: string,
+    public available: boolean = true
+  ) {}
+
+  borrow() {
+    if (!this.available) {
+      throw new Error(`Book "${this.title}" is already borrowed.`);
+    }
+    this.available = false;
+  }
+
+  returnBook() {
+    this.available = true;
+  }
+}
+📄 user.ts
+export class User {
+  constructor(public id: number, public name: string) {}
+}
+📄 transaction.ts
+import both User and Book modules and use error handling.
+
+import { Book } from './book';
+import { User } from './user';
+
+export class Transaction {
+  constructor(public user: User, public book: Book) {}
+
+  borrowBook() {
+    try {
+      this.book.borrow();
+      console.log(`${this.user.name} borrowed "${this.book.title}".`);
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : "Unknown error");
+    }
+  }
+
+  returnBook() {
+    this.book.returnBook();
+    console.log(`${this.user.name} returned "${this.book.title}".`);
+  }
+}
+📄 index.ts (Main Program)
+import { Book } from './book';
+import { User } from './user';
+import { Transaction } from './transaction';
+
+const user1 = new User(1, "Alice");
+const user2 = new User(2, "Bob");
+
+const book1 = new Book(101, "TypeScript Basics", "Author A");
+const book2 = new Book(102, "Advanced JS", "Author B");
+
+const txn1 = new Transaction(user1, book1);
+txn1.borrowBook(); // Success
+
+const txn2 = new Transaction(user2, book1);
+txn2.borrowBook(); // Will throw error since already borrowed
+
+txn1.returnBook(); // Return it
+
+txn2.borrowBook(); // Now succeeds
+✅ Compile & Run:
+If you're using Node.js:
+
+Initialize project:
+npm init -y
+npm install typescript
+npx tsc --init
+Compile:
+npx tsc
+Run:
+node index.js
