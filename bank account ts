@@ -1,0 +1,39 @@
+class BankAccount {
+  private balance: number;
+
+  constructor(initialBalance: number) {
+    this.balance = initialBalance;
+  }
+
+  deposit(amount: number): void {
+    this.balance += amount;
+    console.log(`Deposited ₹${amount}. Current balance: ₹${this.balance}`);
+  }
+
+  withdraw(amount: number): void {
+    if (this.balance - amount < 100) {
+      console.log(`Withdrawal denied. Minimum balance of ₹100 must be maintained.`);
+    } else {
+      this.balance -= amount;
+      console.log(`Withdrew ₹${amount}. Current balance: ₹${this.balance}`);
+    }
+  }
+
+  getBalance(): number {
+    return this.balance;
+  }
+}
+
+// Example usage
+const myAccount = new BankAccount(500);
+myAccount.deposit(200);       // Deposited ₹200. Current balance: ₹700
+myAccount.withdraw(550);      // Withdrawal denied
+myAccount.withdraw(400);      // Withdrew ₹400. Current balance: ₹300
+
+ Steps to Run:
+Save the file as bank.ts
+
+Compile with TypeScript:
+tsc bank.ts
+Run the output JavaScript:
+node bank.js
