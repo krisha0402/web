@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html ng-app="regApp">
+<head>
+  <meta charset="UTF-8">
+  <title>AngularJS Registration + Services</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    input, button { margin-bottom: 10px; padding: 6px; }
+  </style>
+</head>
+<body ng-controller="RegisterController">
+
+  <h2>Registration Form</h2>
+  <form ng-submit="submitForm()">
+    <label>Name:</label>
+    <input type="text" ng-model="user.name" required><br>
+    
+    <label>Email:</label>
+    <input type="email" ng-model="user.email" required><br>
+    
+    <label>Password:</label>
+    <input type="password" ng-model="user.password" required><br>
+    
+    <button type="submit">Register</button>
+  </form>
+
+  <p ng-if="submitted">✔️ {{ user.name }} registered successfully!</p>
+
+  <h3>Services Output:</h3>
+  <p><strong>$location:</strong> Path = {{ path }}</p>
+  <p><strong>$window:</strong> Width = {{ screenWidth }}</p>
+  <p><strong>$timeout:</strong> Message = {{ timeoutMsg }}</p>
+  <p><strong>$interval:</strong> Seconds = {{ seconds }}</p>
+  <p><strong>$log:</strong> Check the browser console for logs.</p>
+  <p><strong>$http:</strong> (Fake request) Status = {{ apiStatus }}</p>
+
+  <script>
+    const app = angular.module('regApp', []);
+
+    app.controller('RegisterController', function($scope, $location, $window, $timeout, $interval, $log, $http) {
+      $scope.user = {};
+      $scope.submitted = false;
+
+      $scope.submitForm = function() {
+        $scope.submitted = true;
+        $log.info("User Registered:", $scope.user);
+      };
+
+      // 1. $location service
+      $scope.path = $location.path();
+
+      // 2. $window service
+      $scope.screenWidth = $window.innerWidth;
+
+      // 3. $timeout service
+      $timeout(function() {
+        $scope.timeoutMsg = "This message is shown after 2 seconds";
+      }, 2000);
+
+      // 4. $interval service
+      $scope.seconds = 0;
+      $interval(function() {
+        $scope.seconds++;
+      }, 1000);
+
+      // 5. $log service (already used in submitForm)
+
+      // 6. $http service (fake GET request)
+      $http.get("https://jsonplaceholder.typicode.com/posts/1")
+        .then(function(response) {
+          $scope.apiStatus = "Success";
+        }, function(error) {
+          $scope.apiStatus = "Error";
+        });
+    });
+  </script>
+
+</body>
+</html>
