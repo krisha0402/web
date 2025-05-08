@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>AngularJS Services Demo</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    h2 { color: #008080; }
+    .box { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body ng-controller="ServiceController">
+
+  <h2>AngularJS Services Demo</h2>
+
+  <div class="box">
+    <strong>1. $http:</strong><br>
+    <button ng-click="loadData()">Load Dummy Data</button>
+    <p>{{ data.title }}</p>
+  </div>
+
+  <div class="box">
+    <strong>2. $timeout:</strong><br>
+    Message after 2 seconds: <b>{{ timeoutMessage }}</b>
+  </div>
+
+  <div class="box">
+    <strong>3. $interval:</strong><br>
+    Seconds passed: {{ seconds }}
+  </div>
+
+  <div class="box">
+    <strong>4. $location:</strong><br>
+    Current URL: {{ currentUrl }}
+  </div>
+
+  <div class="box">
+    <strong>5. $log:</strong><br>
+    Open the browser console to see logged messages.
+  </div>
+
+  <script>
+    const app = angular.module('myApp', []);
+
+    app.controller('ServiceController', function($scope, $http, $timeout, $interval, $location, $log) {
+
+      // 1. $http
+      $scope.data = {};
+      $scope.loadData = function() {
+        $http.get("https://jsonplaceholder.typicode.com/todos/1")
+          .then(response => {
+            $scope.data = response.data;
+          });
+      };
+
+      // 2. $timeout
+      $timeout(function() {
+        $scope.timeoutMessage = "Hello after 2 seconds!";
+      }, 2000);
+
+      // 3. $interval
+      $scope.seconds = 0;
+      $interval(function() {
+        $scope.seconds++;
+      }, 1000);
+
+      // 4. $location
+      $scope.currentUrl = $location.absUrl();
+
+      // 5. $log
+      $log.info("This is a log message using $log service.");
+
+    });
+  </script>
+</body>
+</html>
