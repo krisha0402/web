@@ -1,0 +1,142 @@
+1. MongoDB Schema (Using Mongoose)
+Create a file: models/Result.js
+const mongoose = require("mongoose");
+
+const resultSchema = new mongoose.Schema({
+  class: String,
+  prn: { type: String, unique: true },
+  name: String,
+  email: String,
+  marks: {
+    subject1: Number,
+    subject2: Number,
+    subject3: Number
+  }
+});
+
+module.exports = mongoose.model("Result", resultSchema);
+🔹 2. Backend (Node.js + Express)
+Create server.js:
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const Result = require("./models/Result");
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+mongoose.connect("mongodb://127.0.0.1:27017/studentResults", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+// Create
+app.post("/results", async (req, res) => {
+  try {
+    const result = new Result(req.body);
+    await result.save();
+    res.status(201).send(result);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+// Read all
+app.get("/results", async (req, res) => {
+  const results = await Result.find();
+  res.send(results);
+});
+
+// Update
+app.put("/results/:id", async (req, res) => {
+  try {
+    const updated = await Result.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.send(updated);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+// Delete
+app.delete("/results/:id", async (req, res) => {
+  try {
+    await Result.findByIdAndDelete(req.params.id);
+    res.send({ message: "Deleted successfully" });
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+🔹 3. Frontend (HTML + JS)
+Create index.html:
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Results</title>
+</head>
+<body>
+  <h2>Add Student Result</h2>
+  <form id="resultForm">
+    PRN: <input type="text" id="prn" /><br />
+    Name: <input type="text" id="name" /><br />
+    Email: <input type="email" id="email" /><br />
+    Class: <input type="text" id="class" /><br />
+    Subject1: <input type="number" id="subject1" /><br />
+    Subject2: <input type="number" id="subject2" /><br />
+    Subject3: <input type="number" id="subject3" /><br />
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>All Results</h2>
+  <ul id="resultsList"></ul>
+
+  <script>
+    const form = document.getElementById("resultForm");
+    const list = document.getElementById("resultsList");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const result = {
+        prn: prn.value,
+        name: name.value,
+        email: email.value,
+        class: class.value,
+        marks: {
+          subject1: +subject1.value,
+          subject2: +subject2.value,
+          subject3: +subject3.value
+        }
+      };
+
+      await fetch("http://localhost:3000/results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result)
+      });
+
+      loadResults();
+      form.reset();
+    });
+
+    async function loadResults() {
+      const res = await fetch("http://localhost:3000/results");
+      const data = await res.json();
+      list.innerHTML = "";
+      data.forEach(d => {
+        const li = document.createElement("li");
+        li.textContent = `${d.name} (${d.prn}) - ${d.class}`;
+        list.appendChild(li);
+      });
+    }
+
+    loadResults();
+  </script>
+</body>
+</html>
+🔹 To Run the Project:
+Start MongoDB (Compass or local)
+
+Run backend:
+node server.js
