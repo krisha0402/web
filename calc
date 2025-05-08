@@ -153,3 +153,41 @@ function convertTemp(): void {
     result.innerText = `${temp}°F = ${celsius.toFixed(2)}°C`;
   }
 }
+
+TIPPP
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tip Calculator</title>
+</head>
+<body>
+  <h2>Tip Calculator</h2>
+  <input type="number" id="bill" placeholder="Bill Amount" />
+  <input type="number" id="tip" placeholder="Tip (%)" />
+  <button onclick="calculateTip()">Calculate</button>
+  <p id="result"></p>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+function calculateTip(): void {
+  const billInput = document.getElementById("bill") as HTMLInputElement;
+  const tipInput = document.getElementById("tip") as HTMLInputElement;
+  const result = document.getElementById("result") as HTMLParagraphElement;
+
+  const bill = parseFloat(billInput.value);
+  const tipPercent = parseFloat(tipInput.value);
+
+  if (isNaN(bill) || isNaN(tipPercent)) {
+    result.textContent = "Please enter valid numbers.";
+    return;
+  }
+
+  const tipAmount = bill * (tipPercent / 100);
+  const total = bill + tipAmount;
+
+  result.textContent = `Tip: ₹${tipAmount.toFixed(2)}, Total: ₹${total.toFixed(2)}`;
+}
+
